@@ -42,5 +42,15 @@ func (repo *userRepository) Register(newUser users.User) error {
 }
 
 func (repo *userRepository) Login(email string) (users.User, error) {
-	panic("on progress")
+	var data = new(User)
+
+	if err := repo.db.Where("email = ?", email).First(data).Error; err != nil {
+		return users.User{}, err
+	}
+
+	var result = new(users.User)
+	result.ID = data.ID
+	result.Name = data.Name
+
+	return *result, nil
 }

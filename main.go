@@ -30,10 +30,15 @@ func main() {
 		panic(err)
 	}
 
+	var jwtConfig = new(config.JWT)
+	if err := jwtConfig.LoadFromEnv(); err != nil {
+		panic(err)
+	}
+
 	enc := encrypt.New()
 	userRepository := ur.NewUserRepository(dbConnection)
 	userService := us.New(userRepository, enc)
-	userHandler := uh.NewUserHandler(userService)
+	userHandler := uh.NewUserHandler(userService, *jwtConfig)
 
 	routes.InitRoute(
 		e,

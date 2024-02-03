@@ -18,4 +18,5 @@ func InitRoute(e *echo.Echo, uh users.Handler) {
 
 func routeUser(e *echo.Echo, uh users.Handler) {
 	e.POST("/register", uh.Register())
+	e.POST("/login", uh.Login())
 }

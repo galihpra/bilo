@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"bilo/config"
 	"bilo/features/users"
+	"bilo/helper/tokens"
 	"net/http"
 	"strings"
 
@@ -9,12 +11,14 @@ import (
 )
 
 type userHandler struct {
-	service users.Service
+	service   users.Service
+	jwtConfig config.JWT
 }
 
-func NewUserHandler(service users.Service) users.Handler {
+func NewUserHandler(service users.Service, jwtConfig config.JWT) users.Handler {
 	return &userHandler{
-		service: service,
+		service:   service,
+		jwtConfig: jwtConfig,
 	}
 }
 
@@ -61,6 +65,42 @@ func (hdl *userHandler) Register() echo.HandlerFunc {
 
 func (hdl *userHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		panic("on progress")
+		var request = new(LoginRequest)
+		var response = make(map[string]any)
+
+		if err := c.Bind(request); err != nil {
+			c.Logger().Error(err)
+
+			response["message"] = "please fill input correctly"
+			return c.JSON(http.StatusBadRequest, response)
+		}
+
+		result, err := hdl.service.Login(request.Email, request.Password)
+		if err != nil {
+			c.Logger().Error(err)
+
+			if strings.Contains(err.Error(), "validate") {
+				response["message"] = strings.ReplaceAll(err.Error(), "validate: ", "")
+				return c.JSON(http.StatusBadRequest, response)
+			}
+
+			response["message"] = "internal server error"
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+
+		strToken, err := tokens.GenerateJWT(hdl.jwtConfig.Secret, result.ID)
+		if err != nil {
+			return err
+		}
+
+		var data = new(LoginResponse)
+		data.Name = result.Name
+		data.Username = result.Username
+		data.Email = result.Email
+		data.Token = strToken
+
+		response["message"] = "login success"
+		response["data"] = data
+		return c.JSON(http.StatusOK, response)
 	}
 }

@@ -24,10 +24,10 @@ type Handler interface {
 
 type Service interface {
 	Register(newUser User) error
-	Login(email string, password string) (User, error)
+	Login(email string, password string) (*User, error)
 }
 
 type Repository interface {
 	Register(newUser User) error
-	Login(email string) (User, error)
+	Login(email string) (*User, error)
 }

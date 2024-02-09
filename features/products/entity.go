@@ -1,7 +1,6 @@
 package products
 
 import (
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -13,6 +12,8 @@ type Product struct {
 	Stock       int64
 	Condition   string
 	Description string
+
+	UserId uint
 }
 
 type Handler interface {
@@ -20,9 +21,9 @@ type Handler interface {
 }
 
 type Service interface {
-	Create(token *jwt.Token, data Product) error
+	Create(data Product) error
 }
 
 type Repository interface {
-	Create(userID uint, data Product) error
+	Create(data Product) error
 }

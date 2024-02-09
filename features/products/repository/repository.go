@@ -15,7 +15,7 @@ type Product struct {
 	Condition   string  `gorm:"column:condition; type:varchar(8);"`
 	Description string  `gorm:"column:description; type:text;"`
 
-	UserId uint
+	UserId uint `gorm:"column:user_id;"`
 	User   User `gorm:"foreignKey:UserId"`
 }
 
@@ -33,14 +33,13 @@ func NewProductRepository(db *gorm.DB) products.Repository {
 	}
 }
 
-func (repo *productRepository) Create(userID uint, data products.Product) error {
+func (repo *productRepository) Create(data products.Product) error {
 	var inputDB = new(Product)
 	inputDB.Name = data.Name
 	inputDB.Price = data.Price
 	inputDB.Stock = data.Stock
 	inputDB.Condition = data.Condition
 	inputDB.Description = data.Description
-	inputDB.UserId = userID
 
 	if err := repo.db.Create(inputDB).Error; err != nil {
 		return err

@@ -1,27 +1,21 @@
 package service
 
 import (
-	"bilo/config"
 	"bilo/features/products"
-	"bilo/helper/tokens"
 	"errors"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type productService struct {
-	repo      products.Repository
-	jwtConfig config.JWT
+	repo products.Repository
 }
 
-func NewProductService(repo products.Repository, jwtConfig config.JWT) products.Service {
+func NewProductService(repo products.Repository) products.Service {
 	return &productService{
-		repo:      repo,
-		jwtConfig: jwtConfig,
+		repo: repo,
 	}
 }
 
-func (srv *productService) Create(token *jwt.Token, data products.Product) error {
+func (srv *productService) Create(data products.Product) error {
 	if data.Name == "" {
 		return errors.New("validate: name can't be empty")
 	}
@@ -38,12 +32,7 @@ func (srv *productService) Create(token *jwt.Token, data products.Product) error
 		return errors.New("validate: stock can't be empty")
 	}
 
-	userId, err := tokens.ExtractToken(srv.jwtConfig.Secret, token)
-	if err != nil {
-		return errors.New("unauthorized")
-	}
-
-	if err := srv.repo.Create(userId, data); err != nil {
+	if err := srv.repo.Create(data); err != nil {
 		return err
 	}
 

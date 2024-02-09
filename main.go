@@ -10,12 +10,15 @@ import (
 	ur "bilo/features/users/repository"
 	us "bilo/features/users/service"
 
+	ph "bilo/features/products/handler"
+	pr "bilo/features/products/repository"
+	ps "bilo/features/products/service"
+
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	e := echo.New()
-
 	var dbConfig = new(config.DatabaseMysql)
 	if err := dbConfig.LoadFromEnv(); err != nil {
 		panic(err)
@@ -40,10 +43,22 @@ func main() {
 	userService := us.New(userRepository, enc)
 	userHandler := uh.NewUserHandler(userService, *jwtConfig)
 
-	routes.InitRoute(
-		e,
-		userHandler,
-	)
+	productRepository := pr.NewProductRepository(dbConnection)
+	productService := ps.NewProductService(productRepository)
+	productHandler := ph.NewProductHandler(productService, *jwtConfig)
 
-	e.Logger.Fatal(e.Start(":8000"))
+	app := echo.New()
+	app.Use(middleware.Recover())
+	app.Use(middleware.CORS())
+
+	route := routes.Routes{
+		JWTKey:         jwtConfig.Secret,
+		Server:         app,
+		UserHandler:    userHandler,
+		ProductHandler: productHandler,
+	}
+
+	route.InitRouter()
+
+	app.Logger.Fatal(app.Start(":8000"))
 }

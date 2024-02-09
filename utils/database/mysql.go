@@ -7,6 +7,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
+	pr "bilo/features/products/repository"
 	ur "bilo/features/users/repository"
 )
 
@@ -22,6 +23,7 @@ func MysqlInit(cfg config.DatabaseMysql) (*gorm.DB, error) {
 func MysqlMigrate(db *gorm.DB) error {
 	err := db.AutoMigrate(
 		&ur.User{},
+		&pr.Product{},
 	)
 
 	if err != nil {

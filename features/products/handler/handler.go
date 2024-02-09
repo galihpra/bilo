@@ -4,7 +4,6 @@ import (
 	"bilo/config"
 	"bilo/features/products"
 	"bilo/helper/tokens"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -36,7 +35,6 @@ func (hdl *productHandler) Create() echo.HandlerFunc {
 		}
 
 		userId, err := tokens.ExtractToken(hdl.jwtConfig.Secret, token.(*jwt.Token))
-		fmt.Println(userId)
 		if err != nil {
 			c.Logger().Error(err)
 
@@ -57,7 +55,7 @@ func (hdl *productHandler) Create() echo.HandlerFunc {
 		parseInput.Stock = request.Stock
 		parseInput.Condition = request.Condition
 		parseInput.Description = request.Description
-		request.UserId = userId
+		parseInput.UserId = userId
 
 		if err := hdl.service.Create(*parseInput); err != nil {
 			c.Logger().Error(err)

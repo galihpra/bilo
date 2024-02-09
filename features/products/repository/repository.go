@@ -40,6 +40,7 @@ func (repo *productRepository) Create(data products.Product) error {
 	inputDB.Stock = data.Stock
 	inputDB.Condition = data.Condition
 	inputDB.Description = data.Description
+	inputDB.UserId = data.UserId
 
 	if err := repo.db.Create(inputDB).Error; err != nil {
 		return err

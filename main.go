@@ -4,6 +4,7 @@ import (
 	"bilo/config"
 	"bilo/helper/encrypt"
 	"bilo/routes"
+	"bilo/utils/cloudinary"
 	"bilo/utils/database"
 
 	uh "bilo/features/users/handler"
@@ -38,12 +39,22 @@ func main() {
 		panic(err)
 	}
 
+	var cloudinaryConfig = new(config.Cloudinary)
+	if err := cloudinaryConfig.LoadFromEnv(); err != nil {
+		panic(err)
+	}
+
+	cloudinary, err := cloudinary.NewCloudinary(*cloudinaryConfig)
+	if err != nil {
+		panic(err)
+	}
+
 	enc := encrypt.New()
 	userRepository := ur.NewUserRepository(dbConnection)
 	userService := us.New(userRepository, enc)
 	userHandler := uh.NewUserHandler(userService, *jwtConfig)
 
-	productRepository := pr.NewProductRepository(dbConnection)
+	productRepository := pr.NewProductRepository(dbConnection, cloudinary)
 	productService := ps.NewProductService(productRepository)
 	productHandler := ph.NewProductHandler(productService, *jwtConfig)
 

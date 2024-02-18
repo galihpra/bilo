@@ -2,6 +2,9 @@ package repository
 
 import (
 	"bilo/features/products"
+	"bilo/utils/cloudinary"
+	"context"
+	"io"
 
 	"gorm.io/gorm"
 )
@@ -17,23 +20,33 @@ type Product struct {
 
 	UserId uint `gorm:"column:user_id;"`
 	User   User `gorm:"foreignKey:UserId"`
+
+	Images []Image `gorm:"many2many:product_images;"`
 }
 
 type User struct {
 	Id uint
 }
 
-type productRepository struct {
-	db *gorm.DB
+type Image struct {
+	Id       uint      `gorm:"column:id; primaryKey;"`
+	ImageURL string    `gorm:"column:image_url; type:text"`
+	ImageRaw io.Reader `gorm:"-"`
 }
 
-func NewProductRepository(db *gorm.DB) products.Repository {
+type productRepository struct {
+	db    *gorm.DB
+	cloud cloudinary.Cloud
+}
+
+func NewProductRepository(db *gorm.DB, cloud cloudinary.Cloud) products.Repository {
 	return &productRepository{
-		db: db,
+		db:    db,
+		cloud: cloud,
 	}
 }
 
-func (repo *productRepository) Create(data products.Product) error {
+func (repo *productRepository) Create(ctx context.Context, data products.Product) error {
 	var inputDB = new(Product)
 	inputDB.Name = data.Name
 	inputDB.Price = data.Price
@@ -41,6 +54,19 @@ func (repo *productRepository) Create(data products.Product) error {
 	inputDB.Condition = data.Condition
 	inputDB.Description = data.Description
 	inputDB.UserId = data.UserId
+
+	for i := 0; i < len(data.Images); i++ {
+		url, err := repo.cloud.Upload(ctx, "products", data.Images[i].ImageRaw)
+		if err != nil {
+			return err
+		}
+
+		image := Image{
+			ImageURL: *url,
+		}
+
+		inputDB.Images = append(inputDB.Images, image)
+	}
 
 	if err := repo.db.Create(inputDB).Error; err != nil {
 		return err

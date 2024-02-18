@@ -2,6 +2,7 @@ package service
 
 import (
 	"bilo/features/products"
+	"context"
 	"errors"
 )
 
@@ -15,7 +16,7 @@ func NewProductService(repo products.Repository) products.Service {
 	}
 }
 
-func (srv *productService) Create(data products.Product) error {
+func (srv *productService) Create(ctx context.Context, data products.Product) error {
 	if data.Name == "" {
 		return errors.New("validate: name can't be empty")
 	}
@@ -32,7 +33,7 @@ func (srv *productService) Create(data products.Product) error {
 		return errors.New("validate: stock can't be empty")
 	}
 
-	if err := srv.repo.Create(data); err != nil {
+	if err := srv.repo.Create(ctx, data); err != nil {
 		return err
 	}
 

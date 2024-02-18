@@ -1,6 +1,9 @@
 package products
 
 import (
+	"context"
+	"io"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,6 +17,14 @@ type Product struct {
 	Description string
 
 	UserId uint
+
+	Images []Image
+}
+
+type Image struct {
+	ID       uint
+	ImageURL string
+	ImageRaw io.Reader
 }
 
 type Handler interface {
@@ -21,9 +32,9 @@ type Handler interface {
 }
 
 type Service interface {
-	Create(data Product) error
+	Create(ctx context.Context, data Product) error
 }
 
 type Repository interface {
-	Create(data Product) error
+	Create(ctx context.Context, data Product) error
 }

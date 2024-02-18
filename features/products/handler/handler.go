@@ -4,6 +4,8 @@ import (
 	"bilo/config"
 	"bilo/features/products"
 	"bilo/helper/tokens"
+	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -42,6 +44,12 @@ func (hdl *productHandler) Create() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, response)
 		}
 
+		if err := c.Request().ParseMultipartForm(10 << 20); err != nil {
+			c.Logger().Error(err)
+			response["message"] = "failed to parse form data"
+			return c.JSON(http.StatusBadRequest, response)
+		}
+
 		if err := c.Bind(request); err != nil {
 			c.Logger().Error(err)
 
@@ -57,7 +65,24 @@ func (hdl *productHandler) Create() echo.HandlerFunc {
 		parseInput.Description = request.Description
 		parseInput.UserId = userId
 
-		if err := hdl.service.Create(*parseInput); err != nil {
+		// Handle file uploads
+		images := c.Request().MultipartForm.File["images"]
+		var imageReaders []io.Reader
+		for _, img := range images {
+			file, err := img.Open()
+			if err != nil {
+				c.Logger().Error(err)
+				response["message"] = "failed to open uploaded file"
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			imageReaders = append(imageReaders, file) // Tambahkan file ke dalam slice sebelum menutupnya
+			defer file.Close()
+		}
+		// Set image readers to request
+		request.Images = imageReaders
+		fmt.Println(request.Images)
+
+		if err := hdl.service.Create(c.Request().Context(), *parseInput); err != nil {
 			c.Logger().Error(err)
 
 			if strings.Contains(err.Error(), "validate") {

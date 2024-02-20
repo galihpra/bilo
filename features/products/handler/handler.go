@@ -4,8 +4,6 @@ import (
 	"bilo/config"
 	"bilo/features/products"
 	"bilo/helper/tokens"
-	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -66,21 +64,28 @@ func (hdl *productHandler) Create() echo.HandlerFunc {
 		parseInput.UserId = userId
 
 		// Handle file uploads
-		images := c.Request().MultipartForm.File["images"]
-		var imageReaders []io.Reader
-		for _, img := range images {
-			file, err := img.Open()
-			if err != nil {
-				c.Logger().Error(err)
-				response["message"] = "failed to open uploaded file"
-				return c.JSON(http.StatusInternalServerError, response)
+		if form, err := c.MultipartForm(); err == nil {
+			files := form.File["images"]
+			for _, file := range files {
+				src, err := file.Open()
+				if err != nil {
+					c.Logger().Error(err)
+					response["message"] = "failed to open file"
+					return c.JSON(http.StatusInternalServerError, response)
+				}
+				defer src.Close()
+
+				request.Images = append(request.Images, src)
 			}
-			imageReaders = append(imageReaders, file) // Tambahkan file ke dalam slice sebelum menutupnya
-			defer file.Close()
 		}
-		// Set image readers to request
-		request.Images = imageReaders
-		fmt.Println(request.Images)
+
+		for _, file := range request.Images {
+			if file != nil {
+				parseInput.Images = append(parseInput.Images, products.Image{
+					ImageRaw: file,
+				})
+			}
+		}
 
 		if err := hdl.service.Create(c.Request().Context(), *parseInput); err != nil {
 			c.Logger().Error(err)

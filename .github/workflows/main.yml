@@ -3,7 +3,7 @@ name: bilo
 on:
   push:
     branches:
-      - "dev"
+      - "main"
 
 jobs:
   build:

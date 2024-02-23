@@ -41,5 +41,5 @@ jobs:
             docker stop ${{ secrets.CONTAINER_NAME }}
             docker rm ${{ secrets.CONTAINER_NAME }}
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}
-            docker run --name ${{ secrets.CONTAINER_NAME }} -d -p 8000:8000 --link mysqlbilo -e DB_HOST=54.160.167.34 -e DB_USERNAME=root -e DB_PASSWORD=toor -e DB_PORT=3306 -e JWT_SECRET=5$e3c!2EtK3y*Y -e DB_DATABASE=db_bilo ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}
+            docker run --name ${{ secrets.CONTAINER_NAME }} -d -p 8000:8000 --link ${{ secrets.CONTAINER_MYSQL_NAME }} -e DB_HOST=${{ secrets.DBHOST }} -e DB_USERNAME=${{ secrets.DBUSER }} -e DB_PASSWORD=${{ secrets.DBPASS }} -e DB_PORT=${{ secrets.DBPORT }} -e JWT_SECRET=${{ secrets.JWT }} -e DB_DATABASE=${{ secrets.DBNAME }} -e CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }} -e CLOUDINARY_KEY=${{ secrets.CLOUDINARY_KEY }} -e CLOUDINARY_SECRET=${{ secrets.CLOUDINARY_SECRET }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}
         

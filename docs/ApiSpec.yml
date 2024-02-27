@@ -47,6 +47,26 @@ paths:
         "500":
           $ref: "#/components/responses/500"
 
+  /products:
+    post:
+      tags:
+        - Product
+      summary: "Insert new product"
+      requestBody:
+        $ref: "#/components/requestBodies/product"
+      responses:
+        "201":
+          $ref: "#/components/responses/product_201"
+        "400":
+          $ref: "#/components/responses/product_400"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "409":
+          $ref: "#/components/responses/product_409"
+        "500":
+          $ref: "#/components/responses/500"
 components:
   schemas:
     user:
@@ -67,6 +87,36 @@ components:
           format: binary
         token:
           type: string
+    
+    products:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+          format: currency
+        stock:
+          type: integer
+        condition:
+          type: string
+        description:
+          type: string
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+        picture:
+          type: array
+          items:
+            type: string
+            format: binary
+        user:
+          $ref: "#/components/schemas/user"
+    
     apiResponse:
       type: object
       properties:
@@ -238,6 +288,53 @@ components:
               value:
                 message: "email is already in use"
 
+    "product_201":
+      description: "create product success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "create product success"
+    "product_400":
+      description: "bad request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          examples:
+            "default":
+              value:
+                message: "bad request"
+            "no input":
+              value:
+                message: "please fill input correctly"
+            "invalid name":
+              value:
+                message: "please fill name correctly"
+            "invalid price":
+              value:
+                message: "please fill price correctly"
+            "invalid stock":
+              value:
+                message: "please fill stock correctly"
+            "invalid condition":
+              value:
+                message: "please fill condition correctly"
+            "invalid description":
+              value:
+                message: "please fill description correctly"
+    "product_409":
+      description: "conflict"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          examples:
+            "duplicate product":
+              value:
+                message: "the product is already in the database"
+
   requestBodies:
     login:
       content:
@@ -277,3 +374,31 @@ components:
               password:
                 type: string
                 example: "galih123"
+
+    product:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "name"
+              - "price"
+              - "stock"
+              - "condition"
+              - "description"
+            properties:
+              name:
+                type: string 
+                example: "Keyboard"
+              price:
+                type: number 
+                example: 300000
+              stock:
+                type: integer
+                example: 10
+              condition:
+                type: string
+                example: "New"
+              description:
+                type: string
+                example: "This is new mechanical keyboard model."

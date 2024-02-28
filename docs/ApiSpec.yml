@@ -109,7 +109,7 @@ components:
           format: float
           minimum: 0
           maximum: 5
-        picture:
+        images:
           type: array
           items:
             type: string
@@ -377,7 +377,7 @@ components:
 
     product:
       content:
-        application/json:
+        multipart/form-data:
           schema:
             type: object
             required:
@@ -386,6 +386,7 @@ components:
               - "stock"
               - "condition"
               - "description"
+              - "images"
             properties:
               name:
                 type: string 
@@ -402,3 +403,8 @@ components:
               description:
                 type: string
                 example: "This is new mechanical keyboard model."
+              images:
+                type: array
+                items:
+                  type: string
+                  format: binary

@@ -67,6 +67,24 @@ paths:
           $ref: "#/components/responses/product_409"
         "500":
           $ref: "#/components/responses/500"
+    get:
+      tags:
+        - Product
+      summary: "Get all product"
+      parameters:
+        - $ref: "#/components/parameters/productSearch"
+        - $ref: "#/components/parameters/productPaginationStart"
+        - $ref: "#/components/parameters/productPaginationLimit"
+      responses:
+        "200":
+          $ref: "#/components/responses/productGetAll_200"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
 components:
   schemas:
     user:
@@ -114,6 +132,11 @@ components:
           items:
             type: string
             format: binary
+        thumbnail:
+          type: string
+          format: binary
+        sold:
+          type: integer
         user:
           $ref: "#/components/schemas/user"
     
@@ -139,6 +162,32 @@ components:
               oneOf:
                 - $ref: "#/components/schemas/user"
 
+  parameters:
+    productSearch:
+      name: "keyword"
+      description: "search keyword by product name"
+      in: query
+      required: false
+      schema:
+        type: string
+        example: "logitech"
+    productPaginationStart:
+      name: "start"
+      description: "pagination start"
+      in: query
+      required: false
+      schema:
+        type: integer
+        example: 0
+    productPaginationLimit:
+      name: "limit"
+      description: "pagination limit"
+      in: query
+      required: false
+      schema:
+        type: integer
+        example: 0
+    
   responses:
     "400":
       description: "bad request"
@@ -334,6 +383,74 @@ components:
             "duplicate product":
               value:
                 message: "the product is already in the database"
+    "productGetAll_200":
+      description: "get all product success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "get all product success"
+            pagination:
+              prev: 
+              next: "/products?limit=5&start=6&sort=price&dir=0&keyword=logitech"
+            data: [
+              {
+                product_id: 1,
+                name: "Logitech K120",
+                rating: 4.8,
+                price: 120000,
+                thumbnail: "https://placehold.co/400x400/webp",
+                location: {
+                  "name": "Semarang"
+                },
+                sold: 10
+              },
+              {
+                product_id: 2,
+                name: "Logitech K120",
+                rating: 4.8,
+                price: 120000,
+                thumbnail: "https://placehold.co/400x400/webp",
+                location: {
+                  "name": "Semarang"
+                },
+                sold: 10
+              },
+              {
+                product_id: 3,
+                name: "Logitech K120",
+                rating: 4.8,
+                price: 120000,
+                thumbnail: "https://placehold.co/400x400/webp",
+                location: {
+                  "name": "Semarang"
+                },
+                sold: 10
+              },
+              {
+                product_id: 4,
+                name: "Logitech K120",
+                rating: 4.8,
+                price: 120000,
+                thumbnail: "https://placehold.co/400x400/webp",
+                location: {
+                  "name": "Semarang"
+                },
+                sold: 10
+              },
+              {
+                product_id: 5,
+                name: "Logitech K120",
+                rating: 4.8,
+                price: 120000,
+                thumbnail: "https://placehold.co/400x400/webp",
+                location: {
+                  "name": "Semarang"
+                },
+                sold: 10
+              },
+            ]
 
   requestBodies:
     login:

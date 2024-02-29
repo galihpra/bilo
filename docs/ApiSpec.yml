@@ -52,6 +52,8 @@ paths:
       tags:
         - Product
       summary: "Insert new product"
+      security:
+        - JWT: []
       requestBody:
         $ref: "#/components/requestBodies/product"
       responses:
@@ -596,3 +598,9 @@ components:
                 items:
                   type: string
                   format: binary
+
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

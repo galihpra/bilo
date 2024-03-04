@@ -2,18 +2,20 @@ package repository
 
 import (
 	"bilo/features/users"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	Name     string
-	Hp       string
-	Email    string `gorm:"unique"`
-	Password string
-	Image    string
-	Username string `gorm:"unique"`
+	Id        uint   `gorm:"column:id; primaryKey;"`
+	Name      string `gorm:"column:name; type:varchar(200);"`
+	Hp        string `gorm:"column:phone; type:varchar(20);"`
+	Email     string `gorm:"column:email; type:varchar(20);unique"`
+	Password  string `gorm:"column:password; type:varchar(72);"`
+	Image     string `gorm:"column:image; type:text;"`
+	Username  string `gorm:"column:username; type:varchar(45);unique"`
+	CreatedAt time.Time
 }
 
 type userRepository struct {
@@ -49,7 +51,7 @@ func (repo *userRepository) Login(email string) (*users.User, error) {
 	}
 
 	var result = new(users.User)
-	result.ID = data.ID
+	result.Id = data.Id
 	result.Name = data.Name
 	result.Password = data.Password
 	result.Username = data.Username

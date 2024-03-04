@@ -88,7 +88,7 @@ func (hdl *userHandler) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 
-		strToken, err := tokens.GenerateJWT(hdl.jwtConfig.Secret, result.ID)
+		strToken, err := tokens.GenerateJWT(hdl.jwtConfig.Secret, result.Id)
 		if err != nil {
 			return err
 		}

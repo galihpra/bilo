@@ -63,6 +63,8 @@ paths:
           $ref: "#/components/responses/product_400"
         "404":
           $ref: "#/components/responses/404"
+        "401":
+          $ref: "#/components/responses/401"
         "405":
           $ref: "#/components/responses/405"
         "409":
@@ -103,6 +105,26 @@ paths:
         "500":
           $ref: "#/components/responses/500"
 
+  /charts:
+    post:
+      tags:
+        - Chart
+      summary: "Add product to chart"
+      security:
+        - JWT: []
+      requestBody:
+        $ref: "#/components/requestBodies/chart"
+      responses:
+        "201":
+          $ref: "#/components/responses/chart_201"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
 
 components:
   schemas:
@@ -524,6 +546,14 @@ components:
                 }
               ]
               
+    "chart_201":
+      description: "add to chart success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "product added to chart"
 
   requestBodies:
     login:
@@ -598,6 +628,34 @@ components:
                 items:
                   type: string
                   format: binary
+
+    chart:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "id_product"
+              - "name_product"
+              - "name_user"
+              - "thumbnail"
+              - "price"
+            properties:
+              id_product:
+                type: integer 
+                example: 1
+              name_product:
+                type: string 
+                example: "Logitech K-120"
+              name_user:
+                type: string 
+                example: "Computer Shop"
+              thumbnail:
+                type: string
+                example: "https://placehold.co/400x400/webp"
+              price:
+                type: integer 
+                example: 120000
 
   securitySchemes:
     JWT:

@@ -147,7 +147,7 @@ components:
         token:
           type: string
     
-    products:
+    product:
       type: object
       properties:
         product_id:
@@ -181,6 +181,21 @@ components:
         user:
           $ref: "#/components/schemas/user"
     
+    chart:
+      type: object
+      properties:
+        chart_id:
+          type: integer
+        subtotal:
+          type: number
+          format: currency
+        qty:
+          type: integer
+        user:
+          $ref: "#/components/schemas/user"
+        product:
+          $ref: "#/components/schemas/product"
+    
     apiResponse:
       type: object
       properties:
@@ -198,10 +213,14 @@ components:
                 nullable: true
                 oneOf:
                   - $ref: "#/components/schemas/user"
+                  - $ref: "#/components/schemas/product"
+                  - $ref: "#/components/schemas/chart"
             - type: object
               nullable: true
               oneOf:
                 - $ref: "#/components/schemas/user"
+                - $ref: "#/components/schemas/product"
+                - $ref: "#/components/schemas/chart"
 
   parameters:
     productId:
@@ -636,26 +655,22 @@ components:
             type: object
             required:
               - "id_product"
-              - "name_product"
-              - "name_user"
-              - "thumbnail"
-              - "price"
+              - "id_user"
+              - "subtotal"
+              - "qty"
             properties:
               id_product:
                 type: integer 
                 example: 1
-              name_product:
-                type: string 
-                example: "Logitech K-120"
-              name_user:
-                type: string 
-                example: "Computer Shop"
-              thumbnail:
-                type: string
-                example: "https://placehold.co/400x400/webp"
-              price:
+              id_user:
+                type: integer 
+                example: 1
+              subtotal:
                 type: integer 
                 example: 120000
+              qty:
+                type: integer
+                example: 1
 
   securitySchemes:
     JWT:

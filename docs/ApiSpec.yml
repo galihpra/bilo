@@ -126,6 +126,27 @@ paths:
         "500":
           $ref: "#/components/responses/500"
 
+  /transactions:
+    post:
+      tags: 
+        - Transaction
+      summary: "Transaction/payment"
+      security:
+        - JWT: []
+      requestBody:
+        $ref: "#/components/requestBodies/transaction"
+      responses:
+        "201":
+          $ref: "#/components/responses/transaction_201"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+
 components:
   schemas:
     user:
@@ -194,8 +215,47 @@ components:
         user:
           $ref: "#/components/schemas/user"
         product:
-          $ref: "#/components/schemas/product"
-    
+          type: array
+          items:
+            $ref: "#/components/schemas/product"
+
+    transaction:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+        user:
+          $ref: "#/components/schemas/user"
+        product:
+          type: array
+          items:
+            $ref: "#/components/schemas/product"
+        address:
+          type: string
+        total:
+          type: number
+          format: currency
+        payment_method:
+          type: string
+        status:
+          type: string
+          enum:
+            - "pending"
+            - "approved"
+            - "cancel"
+            - "refund request"
+            - "refund approved"
+            - "refund complete"
+        payment_expired:
+          type: string
+          format: date-time
+        code_bill:
+          type: integer
+        key_bill:
+          type: integer
+        va_number:
+          type: integer
+
     apiResponse:
       type: object
       properties:
@@ -215,12 +275,14 @@ components:
                   - $ref: "#/components/schemas/user"
                   - $ref: "#/components/schemas/product"
                   - $ref: "#/components/schemas/chart"
+                  - $ref: "#/components/schemas/transaction"
             - type: object
               nullable: true
               oneOf:
                 - $ref: "#/components/schemas/user"
                 - $ref: "#/components/schemas/product"
                 - $ref: "#/components/schemas/chart"
+                - $ref: "#/components/schemas/transaction"
 
   parameters:
     productId:
@@ -573,6 +635,15 @@ components:
             $ref: "#/components/schemas/apiResponse"
           example:
             message: "product added to chart"
+              
+    "transaction_201":
+      description: "transaction success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "transaction success"
 
   requestBodies:
     login:
@@ -671,6 +742,30 @@ components:
               qty:
                 type: integer
                 example: 1
+
+    transaction:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "id_user"
+              - "address"
+              - "total"
+              - "payment_method"
+            properties:
+              id_user:
+                type: integer 
+                example: 1
+              address:
+                type: string
+                example: "Jendi rt 03/ rw 02, Jendi"
+              total:
+                type: integer 
+                example: 120000
+              payment_method:
+                type: string
+                example: "BCA"
 
   securitySchemes:
     JWT:

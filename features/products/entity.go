@@ -15,6 +15,7 @@ type Product struct {
 	Stock       int64
 	Condition   string
 	Description string
+	Thumbnail   Image
 
 	UserId uint
 

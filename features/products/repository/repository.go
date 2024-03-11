@@ -10,13 +10,14 @@ import (
 )
 
 type Product struct {
-	Id          uint    `gorm:"column:id; primaryKey;"`
-	Name        string  `gorm:"column:name; type:varchar(200);"`
-	Rating      float32 `gorm:"column:rating; type:float"`
-	Price       float64 `gorm:"column:price; type:decimal(16,2);"`
-	Stock       int64   `gorm:"column:stock; type:integer;"`
-	Condition   string  `gorm:"column:condition; type:varchar(8);"`
-	Description string  `gorm:"column:description; type:text;"`
+	Id           uint    `gorm:"column:id; primaryKey;"`
+	Name         string  `gorm:"column:name; type:varchar(200);"`
+	Rating       float32 `gorm:"column:rating; type:float"`
+	Price        float64 `gorm:"column:price; type:decimal(16,2);"`
+	Stock        int64   `gorm:"column:stock; type:integer;"`
+	Condition    string  `gorm:"column:condition; type:varchar(8);"`
+	Description  string  `gorm:"column:description; type:text;"`
+	ThumbnailUrl string  `gorm:"column:thumbnail; type:text;"`
 
 	UserId uint `gorm:"column:user_id;"`
 	User   User `gorm:"foreignKey:UserId"`
@@ -63,6 +64,11 @@ func (repo *productRepository) Create(ctx context.Context, data products.Product
 
 		image := Image{
 			ImageURL: *url,
+		}
+
+		switch i {
+		case 0:
+			inputDB.ThumbnailUrl = image.ImageURL
 		}
 
 		inputDB.Images = append(inputDB.Images, image)

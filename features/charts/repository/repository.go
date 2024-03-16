@@ -3,6 +3,7 @@ package repository
 import (
 	"bilo/features/charts"
 	"context"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -52,10 +53,39 @@ func NewChartRepository(db *gorm.DB) charts.Repository {
 	}
 }
 
-func (repo *chartRepository) Create(ctx context.Context, data charts.Chart) error {
-	var inputDB = new(Chart)
+func (repo *chartRepository) Create(ctx context.Context, data []charts.ChartDetail) error {
+	var product Product
+	var inputChartDetail = new(ChartDetail)
 
-	inputDB.UserId = data.UserId
+	var chartId = time.Now().String()
+	var total float64
+
+	for i := 0; i < len(data); i++ {
+		if err := repo.db.Where("id = ?", data[i].Products.ID).First(&product).Error; err != nil {
+			return err
+		}
+
+		var subtotal = product.Price * float64(data[i].Quantity)
+		total += subtotal
+
+		inputChartDetail.ChartId = chartId
+		inputChartDetail.ProductId = data[i].Products.ID
+		inputChartDetail.Quantity = data[i].Quantity
+		inputChartDetail.Subtotal = subtotal
+
+		if err := repo.db.Create(inputChartDetail).Error; err != nil {
+			return err
+		}
+	}
+
+	var inputChart = new(Chart)
+
+	inputChart.Id = chartId
+	inputChart.Total = total
+
+	if err := repo.db.Create(inputChart).Error; err != nil {
+		return err
+	}
 
 	return nil
 }

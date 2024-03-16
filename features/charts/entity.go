@@ -43,9 +43,9 @@ type Handler interface {
 }
 
 type Service interface {
-	Create(ctx context.Context, data Chart) error
+	Create(ctx context.Context, data []ChartDetail) error
 }
 
 type Repository interface {
-	Create(ctx context.Context, data Chart) error
+	Create(ctx context.Context, data []ChartDetail) error
 }

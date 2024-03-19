@@ -7,15 +7,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Chart struct {
+type Cart struct {
 	ID    string
 	Total float64
 
 	UserId  uint
-	Details []ChartDetail
+	Details []CartDetail
 }
 
-type ChartDetail struct {
+type CartDetail struct {
 	Quantity int
 	Subtotal float64
 
@@ -43,9 +43,9 @@ type Handler interface {
 }
 
 type Service interface {
-	Create(ctx context.Context, data []ChartDetail) error
+	Create(ctx context.Context, data CartDetail) error
 }
 
 type Repository interface {
-	Create(ctx context.Context, data []ChartDetail) error
+	Create(ctx context.Context, data CartDetail) error
 }

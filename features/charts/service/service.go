@@ -15,7 +15,7 @@ func NewChartService(repo charts.Repository) charts.Service {
 	}
 }
 
-func (srv *chartService) Create(ctx context.Context, data []charts.ChartDetail) error {
+func (srv *chartService) Create(ctx context.Context, data charts.CartDetail) error {
 	if err := srv.repo.Create(ctx, data); err != nil {
 		return err
 	}

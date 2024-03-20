@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"bilo/features/charts"
+	"bilo/features/carts"
 	"context"
 	"time"
 
@@ -47,13 +47,13 @@ type chartRepository struct {
 	db *gorm.DB
 }
 
-func NewChartRepository(db *gorm.DB) charts.Repository {
+func NewChartRepository(db *gorm.DB) carts.Repository {
 	return &chartRepository{
 		db: db,
 	}
 }
 
-func (repo *chartRepository) Create(ctx context.Context, data charts.CartDetail) error {
+func (repo *chartRepository) Create(ctx context.Context, data carts.CartDetail) error {
 	var product Product
 	var inputChartDetail = new(CartDetail)
 

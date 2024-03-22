@@ -15,7 +15,7 @@ func NewCartService(repo carts.Repository) carts.Service {
 	}
 }
 
-func (srv *cartService) Create(ctx context.Context, data carts.CartDetail) error {
+func (srv *cartService) Create(ctx context.Context, data carts.Cart) error {
 	if err := srv.repo.Create(ctx, data); err != nil {
 		return err
 	}

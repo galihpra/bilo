@@ -15,6 +15,10 @@ import (
 	pr "bilo/features/products/repository"
 	ps "bilo/features/products/service"
 
+	ch "bilo/features/carts/handler"
+	cr "bilo/features/carts/repository"
+	cs "bilo/features/carts/service"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -58,6 +62,10 @@ func main() {
 	productService := ps.NewProductService(productRepository)
 	productHandler := ph.NewProductHandler(productService, *jwtConfig)
 
+	cartRepository := cr.NewCartRepository(dbConnection)
+	cartService := cs.NewCartService(cartRepository)
+	cartHandler := ch.NewCartHandler(cartService, *jwtConfig)
+
 	app := echo.New()
 	app.Use(middleware.Recover())
 	app.Use(middleware.CORS())
@@ -67,6 +75,7 @@ func main() {
 		Server:         app,
 		UserHandler:    userHandler,
 		ProductHandler: productHandler,
+		CartHandler:    cartHandler,
 	}
 
 	route.InitRouter()

@@ -9,21 +9,12 @@ import (
 )
 
 type Cart struct {
-	Id    string  `gorm:"column:id; primaryKey;"`
-	Total float64 `gorm:"column:total; type:decimal(16,2);"`
-
-	UserId uint `gorm:"column:user_id;"`
-	User   User `gorm:"foreignKey:UserId"`
-
-	Details []CartDetail
-}
-
-type CartDetail struct {
+	Id       string  `gorm:"column:id; primaryKey;"`
 	Quantity int     `gorm:"column:quantity; type:integer;"`
 	Subtotal float64 `gorm:"column:subtotal; type:decimal(16,2);"`
 
-	ChartId string `gorm:"column:chart_id;"`
-	Chart   Cart   `gorm:"foreignKey:ChartId;"`
+	UserId uint `gorm:"column:user_id;"`
+	User   User `gorm:"foreignKey:UserId"`
 
 	ProductId uint    `gorm:"column:product_id;"`
 	Product   Product `gorm:"foreignKey:ProductId;"`
@@ -43,43 +34,34 @@ type Product struct {
 	User   User `gorm:"foreignKey:UserId"`
 }
 
-type chartRepository struct {
+type cartRepository struct {
 	db *gorm.DB
 }
 
-func NewChartRepository(db *gorm.DB) carts.Repository {
-	return &chartRepository{
+func NewCartRepository(db *gorm.DB) carts.Repository {
+	return &cartRepository{
 		db: db,
 	}
 }
 
-func (repo *chartRepository) Create(ctx context.Context, data carts.CartDetail) error {
+func (repo *cartRepository) Create(ctx context.Context, data carts.Cart) error {
 	var product Product
-	var inputChartDetail = new(CartDetail)
 
-	var chartId = time.Now().String()
-	var total float64
+	var cartId = time.Now().String()
+	var subtotal float64
 
-	if err := repo.db.Where("id = ?", data.Products.ID).First(&product).Error; err != nil {
+	if err := repo.db.Where("id = ?", data.ProductId).First(&product).Error; err != nil {
 		return err
 	}
 
-	var subtotal = product.Price * float64(data.Quantity)
-	total += subtotal
-
-	inputChartDetail.ChartId = chartId
-	inputChartDetail.ProductId = data.Products.ID
-	inputChartDetail.Quantity = data.Quantity
-	inputChartDetail.Subtotal = subtotal
-
-	if err := repo.db.Create(inputChartDetail).Error; err != nil {
-		return err
-	}
+	subtotal = product.Price * float64(data.Quantity)
 
 	var inputChart = new(Cart)
 
-	inputChart.Id = chartId
-	inputChart.Total = total
+	inputChart.Id = cartId
+	inputChart.Subtotal = subtotal
+	inputChart.ProductId = data.ProductId
+	inputChart.UserId = data.UserId
 
 	if err := repo.db.Create(inputChart).Error; err != nil {
 		return err

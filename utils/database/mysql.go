@@ -7,6 +7,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
+	cr "bilo/features/carts/repository"
 	pr "bilo/features/products/repository"
 	ur "bilo/features/users/repository"
 )
@@ -25,6 +26,7 @@ func MysqlMigrate(db *gorm.DB) error {
 		&ur.User{},
 		&pr.Image{},
 		&pr.Product{},
+		&cr.Cart{},
 	)
 
 	if err != nil {

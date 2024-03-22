@@ -16,7 +16,7 @@ type chartHandler struct {
 	jwtConfig config.JWT
 }
 
-func NewChartHandler(service carts.Service, jwtConfig config.JWT) carts.Handler {
+func NewCartHandler(service carts.Service, jwtConfig config.JWT) carts.Handler {
 	return &chartHandler{
 		service:   service,
 		jwtConfig: jwtConfig,
@@ -49,16 +49,9 @@ func (hdl *chartHandler) Create() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, response)
 		}
 
-		var parseInputChart = new(carts.CartDetail)
-		parseInputChart.UserId = userId
-		parseInputChart.Products.ID = request.ProductId.ProductId
-
-		// var parseInputChartDetail = new(charts.ChartDetail)
-
-		// for _, product := range request.ProductId {
-		// 	request.ProductId = append(request.ProductId, product)
-		// 	request.
-		// }
+		var parseInput = new(carts.Cart)
+		parseInput.UserId = userId
+		parseInput.ProductId = request.ProductId
 
 		if err := hdl.service.Create(c.Request().Context(), *parseInput); err != nil {
 			c.Logger().Error(err)
@@ -77,7 +70,7 @@ func (hdl *chartHandler) Create() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 
-		response["message"] = "create product success"
+		response["message"] = "product added to cart"
 		return c.JSON(http.StatusCreated, response)
 	}
 }

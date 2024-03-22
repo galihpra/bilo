@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"bilo/features/carts"
 	"bilo/features/products"
 	"bilo/features/users"
 
@@ -13,11 +14,13 @@ type Routes struct {
 	Server         *echo.Echo
 	UserHandler    users.Handler
 	ProductHandler products.Handler
+	CartHandler    carts.Handler
 }
 
 func (router Routes) InitRouter() {
 	router.UserRouter()
 	router.ProductRouter()
+	router.CartRouter()
 }
 
 func (router *Routes) UserRouter() {
@@ -27,4 +30,8 @@ func (router *Routes) UserRouter() {
 
 func (router *Routes) ProductRouter() {
 	router.Server.POST("/products", router.ProductHandler.Create(), echojwt.JWT([]byte(router.JWTKey)))
+}
+
+func (router *Routes) CartRouter() {
+	router.Server.POST("/carts", router.CartHandler.Create(), echojwt.JWT([]byte(router.JWTKey)))
 }

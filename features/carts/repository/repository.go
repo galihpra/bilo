@@ -53,7 +53,6 @@ func (repo *cartRepository) Create(ctx context.Context, data carts.Cart) error {
 	if err := repo.db.Where("id = ?", data.ProductId).First(&product).Error; err != nil {
 		return err
 	}
-
 	subtotal = product.Price * float64(data.Quantity)
 
 	var inputChart = new(Cart)
@@ -62,6 +61,7 @@ func (repo *cartRepository) Create(ctx context.Context, data carts.Cart) error {
 	inputChart.Subtotal = subtotal
 	inputChart.ProductId = data.ProductId
 	inputChart.UserId = data.UserId
+	inputChart.Quantity = data.Quantity
 
 	if err := repo.db.Create(inputChart).Error; err != nil {
 		return err

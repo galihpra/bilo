@@ -52,6 +52,7 @@ func (hdl *chartHandler) Create() echo.HandlerFunc {
 		var parseInput = new(carts.Cart)
 		parseInput.UserId = userId
 		parseInput.ProductId = request.ProductId
+		parseInput.Quantity = request.Qty
 
 		if err := hdl.service.Create(c.Request().Context(), *parseInput); err != nil {
 			c.Logger().Error(err)

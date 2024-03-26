@@ -69,3 +69,7 @@ func (repo *cartRepository) Create(ctx context.Context, data carts.Cart) error {
 
 	return nil
 }
+
+func (repo *cartRepository) GetByUserId(ctx context.Context, UserId uint) ([]carts.Cart, error) {
+	panic("unimplemented")
+}

@@ -22,3 +22,7 @@ func (srv *cartService) Create(ctx context.Context, data carts.Cart) error {
 
 	return nil
 }
+
+func (srv *cartService) GetByUserId(ctx context.Context, UserId uint) ([]carts.Cart, error) {
+	panic("unimplemented")
+}

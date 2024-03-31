@@ -3,6 +3,7 @@ package service
 import (
 	"bilo/features/carts"
 	"context"
+	"errors"
 )
 
 type cartService struct {
@@ -24,5 +25,14 @@ func (srv *cartService) Create(ctx context.Context, data carts.Cart) error {
 }
 
 func (srv *cartService) GetByUserId(ctx context.Context, UserId uint) ([]carts.Cart, error) {
-	panic("unimplemented")
+	if UserId == 0 {
+		return nil, errors.New("validate: invalid user id")
+	}
+
+	result, err := srv.repo.GetByUserId(ctx, UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

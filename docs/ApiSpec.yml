@@ -77,8 +77,8 @@ paths:
       summary: "Get all product"
       parameters:
         - $ref: "#/components/parameters/productSearch"
-        - $ref: "#/components/parameters/productPaginationStart"
-        - $ref: "#/components/parameters/productPaginationLimit"
+        - $ref: "#/components/parameters/paginationStart"
+        - $ref: "#/components/parameters/paginationLimit"
       responses:
         "200":
           $ref: "#/components/responses/productGetAll_200"
@@ -154,8 +154,8 @@ paths:
   /carts:
     post:
       tags:
-        - cart
-      summary: "Add product to cart"
+        - Cart
+      summary: "Add product to Cart"
       security:
         - JWT: []
       requestBody:
@@ -171,6 +171,27 @@ paths:
           $ref: "#/components/responses/405"
         "500":
           $ref: "#/components/responses/500"
+    get:
+      tags:
+        - Cart
+      summary: "Get cart by user id"
+      security:
+        - JWT: []
+      parameters:
+        - $ref: "#/components/parameters/productSearch"
+        - $ref: "#/components/parameters/paginationStart"
+        - $ref: "#/components/parameters/paginationLimit"
+      responses:
+        "200":
+          $ref: "#/components/responses/cartGetAll_200"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "405":
+          $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"      
 
   /transactions:
     post:
@@ -346,7 +367,7 @@ components:
       schema:
         type: string
         example: "logitech"
-    productPaginationStart:
+    paginationStart:
       name: "start"
       description: "pagination start"
       in: query
@@ -354,7 +375,7 @@ components:
       schema:
         type: integer
         example: 0
-    productPaginationLimit:
+    paginationLimit:
       name: "limit"
       description: "pagination limit"
       in: query
@@ -743,6 +764,37 @@ components:
             $ref: "#/components/schemas/apiResponse"
           example:
             message: "product added to cart"
+    "cartGetAll_200":
+      description: "get all cart success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "get all cart success"
+            pagination:
+              prev: 
+              next: "/carts?limit=5&start=6&keyword=logitech"
+            data: 
+              total: 300000
+              items: [
+                {
+                  product: {
+                    name: "Keyboard Logitech K120",
+                    thumbnail: "https://placehold.co/200x200/webp",
+                    price: 120000,
+                  },
+                  qty: 2,                
+                },
+                {
+                  product: {
+                    name: "Mouse Logitech M90",
+                    thumbnail: "https://placehold.co/200x200/webp",
+                    price: 60000,
+                  },
+                  qty: 1,
+                }
+              ]
               
     "transaction_201":
       description: "transaction success"

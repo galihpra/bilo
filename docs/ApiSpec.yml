@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   description: "This is API Spec for Bilo"
   version: "1.0.0"
-  title: "Wanderer"
+  title: "Bilo"
   termsOfService: "http://swagger.io/terms/"
   contact:
     email: galihp83@gmail.com
@@ -102,6 +102,52 @@ paths:
           $ref: "#/components/responses/404"
         "405":
           $ref: "#/components/responses/405"
+        "500":
+          $ref: "#/components/responses/500"
+    put:
+      tags:
+        - Product
+      summary: "Update Product"
+      security:
+        - JWT: []
+      parameters:
+        - $ref: "#/components/parameters/productId"
+      requestBody:
+        $ref: "#/components/requestBodies/product"
+      responses:
+        "200":
+          $ref: "#/components/responses/productUpdate_200"
+        "400":
+          $ref: "#/components/responses/productCreateUpdate_400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/product_404"
+        "405":
+          $ref: "#/components/responses/405"
+        "409":
+          $ref: "#/components/responses/productCreateUpdate_409"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      tags:
+        - Product
+      summary: "Delete Product"
+      security:
+        - JWT: []
+      parameters:
+        - $ref: "#/components/parameters/productId"
+      responses:
+        "200":
+          $ref: "#/components/responses/productDelete_200"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/product_404"
+        "405":
+          $ref: "#/components/responses/405"
+        "409":
+          $ref: "#/components/responses/productDelete_409"
         "500":
           $ref: "#/components/responses/500"
 
@@ -626,6 +672,68 @@ components:
                   created_at: "2023-12-05T06:57:29.370Z"
                 }
               ]
+    "productUpdate_200":
+      description: "update product success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "update product success"
+    "productCreateUpdate_400":
+      description: "bad request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          examples:
+            "default":
+              value:
+                message: "bad request"
+            "empty name":
+              value:
+                message: "name can't be empty"
+    "productDelete_200":
+      description: "delete product success"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          example:
+            message: "delete product success"
+    "productCreateUpdate_409":
+      description: "conflict"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          examples:
+            "name in use":
+              value:
+                message: "product name already exist"
+    "product_404":
+      description: "not found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          examples:
+            "default":
+              value:
+                message: "not found"
+            "product not found":
+              value:
+                message: "product not found"
+    "productDelete_409":
+      description: "conflict"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/apiResponse"
+          examples:
+            "product in use":
+              value:
+                message: "product used by other resources"
               
     "cart_201":
       description: "add to cart success"
